@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/stared_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="45dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/star_icon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/stared"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/place_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_weight="7" />
+
+    <TextView
+        android:id="@+id/temperature_now"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:gravity="center_horizontal" />
+    <!--        android:text="24°C" />-->
+
+    <ImageView
+        android:id="@+id/forecast_icon_now"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:scaleType="centerCrop" />
+    <!--        android:src="@drawable/art_clear_sky" />-->
+
+
+</LinearLayout>
