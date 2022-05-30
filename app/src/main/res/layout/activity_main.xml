@@ -56,6 +56,11 @@
         android:visibility="gone" />
 
     <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_hourly_weather"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragment_weather"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

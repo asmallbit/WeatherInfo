@@ -11,18 +11,27 @@ import android.widget.Toast;
 
 import com.google.android.material.card.MaterialCardView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import ml.ruby.weatherrecyclerview.adapter.HourlyWeatherAdapter;
 import ml.ruby.weatherrecyclerview.databinding.ActivityMainBinding;
+import ml.ruby.weatherrecyclerview.model.onecall.Hourly;
 import ml.ruby.weatherrecyclerview.repository.PlacesRepository;
 import ml.ruby.weatherrecyclerview.repository.WeatherRepository;
 import ml.ruby.weatherrecyclerview.utils.ExecutorSupplier;
 import ml.ruby.weatherrecyclerview.utils.PreferenceManage;
+import ml.ruby.weatherrecyclerview.view.HourlyWeatherFragment;
 import ml.ruby.weatherrecyclerview.view.PlacesActivity;
 import ml.ruby.weatherrecyclerview.view.WeatherFragment;
 import ml.ruby.weatherrecyclerview.viewmodel.PlacesViewModel;
@@ -65,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         WeatherRepository.getInstance().getIsLoaded().observe(this, this::isLoaded
         );
 
-        // 根棍位置
+        // 更新位置
         placesViewModel.updateLocation();
 
         placesViewModel.getPlaceToSwitch().observe(this, placeBeanItem -> {
@@ -74,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
+        // 检测GPS是否打开
         placesViewModel.isGPSEnabled().observe(this, isGPSEnabled -> {
             if (!isGPSEnabled) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -123,10 +133,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void bindFragment() {
-        FragmentTransaction addFragment = getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_weather, new WeatherFragment());
-        // ... Maybe more widgets
-        addFragment.commit();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_weather, new WeatherFragment())
+                .add(R.id.fragment_hourly_weather, new HourlyWeatherFragment())
+                .commit();
     }
 
     private void isLoaded(boolean isLoaded) {

@@ -1,5 +1,8 @@
 package ml.ruby.weatherrecyclerview.utils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import ml.ruby.weatherrecyclerview.R;
 
 /**
@@ -10,6 +13,7 @@ import ml.ruby.weatherrecyclerview.R;
 public class Utility {
     /**
      * This method is used to get the drawable resource from the weather id code
+     *
      * @param weatherId The id of the weather, check this link https://openweathermap.org/weather-conditions#Weather-Condition-Codes-2
      * @return the drawable resource for code xxx
      */
@@ -35,5 +39,10 @@ public class Utility {
         }
     }
 
-
+    // 从时间戳里获取对应的小时
+    public static String getTimeFromTimeStamp(long timeStamp) {
+        Date date = new Date(timeStamp * 1000);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH");
+        return simpleDateFormat.format(date);
+    }
 }

@@ -1,13 +1,9 @@
 package ml.ruby.weatherrecyclerview.view;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import ml.ruby.weatherrecyclerview.R;
 import ml.ruby.weatherrecyclerview.adapter.WeatherRecyclerViewAdapter;
 import ml.ruby.weatherrecyclerview.databinding.FragmentWeatherBinding;
@@ -27,7 +20,7 @@ import ml.ruby.weatherrecyclerview.model.onecall.Daily;
 import ml.ruby.weatherrecyclerview.model.QueryParams;
 import ml.ruby.weatherrecyclerview.model.onecall.OneCallBean;
 import ml.ruby.weatherrecyclerview.repository.WeatherRepository;
-import ml.ruby.weatherrecyclerview.utils.Constants;
+import ml.ruby.weatherrecyclerview.utils.ExecutorSupplier;
 import ml.ruby.weatherrecyclerview.utils.GetLanguage;
 import ml.ruby.weatherrecyclerview.viewmodel.PlacesViewModel;
 import ml.ruby.weatherrecyclerview.viewmodel.WeatherViewModel;
@@ -39,11 +32,10 @@ import ml.ruby.weatherrecyclerview.viewmodel.WeatherViewModel;
  */
 public class WeatherFragment extends Fragment {
     private FragmentWeatherBinding binding;
-    private static Handler handler = null;
     private PlacesViewModel placesViewModel;
     private WeatherViewModel weatherViewModel;
-    List<Daily> dailyList = new ArrayList<>();
-    WeatherRecyclerViewAdapter adapter = new WeatherRecyclerViewAdapter(dailyList);
+    private final List<Daily> dailyList = new ArrayList<>(8);
+    private final WeatherRecyclerViewAdapter adapter = new WeatherRecyclerViewAdapter(dailyList);
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,21 +54,20 @@ public class WeatherFragment extends Fragment {
         // Set a observer to observe the weather info
         weatherViewModel.getWeatherLiveData().observe(WeatherFragment.this, oneCallBean -> {
             // We will notify the adapter when the user make a new request successfully
-            new Thread(() -> {
+            ExecutorSupplier.getExecutor().execute(() -> {
                 OneCallBean value = weatherViewModel.getWeatherLiveData().getValue();
                 if (value != null) {
-                    List<Daily> dailies = value.getDaily();
                     dailyList.clear();
-                    dailyList.addAll(dailies);
+                    dailyList.addAll(value.getDaily());
                 }
-                requireActivity().runOnUiThread(adapter::notifyDataSetChanged);
-            }).start();
+                requireActivity().runOnUiThread(() -> {
+                    adapter.notifyItemRangeChanged(0, 7);
+                });
+            });
         });
 
         // SwipeRefreshLayout 显示与隐藏
-        WeatherRepository.getInstance().getIsLoaded().observe(this, isLoaded ->
-                isLoaded(isLoaded)
-        );
+        WeatherRepository.getInstance().getIsLoaded().observe(this, this::isLoaded);
     }
 
     @Nullable
@@ -84,8 +75,7 @@ public class WeatherFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         binding = FragmentWeatherBinding.inflate(inflater, container, false);
-        View view = binding.getRoot();
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -106,6 +96,12 @@ public class WeatherFragment extends Fragment {
                         String.valueOf(value.getLon()), GetLanguage.getLanguage()));
             }
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private void isLoaded(boolean isLoaded) {
