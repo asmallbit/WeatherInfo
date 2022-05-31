@@ -7,19 +7,17 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import ml.ruby.weatherrecyclerview.R;
 import ml.ruby.weatherrecyclerview.adapter.WeatherRecyclerViewAdapter;
 import ml.ruby.weatherrecyclerview.databinding.FragmentWeatherBinding;
-import ml.ruby.weatherrecyclerview.model.place.PlaceBeanItem;
-import ml.ruby.weatherrecyclerview.model.onecall.Daily;
 import ml.ruby.weatherrecyclerview.model.QueryParams;
+import ml.ruby.weatherrecyclerview.model.onecall.Daily;
 import ml.ruby.weatherrecyclerview.model.onecall.OneCallBean;
-import ml.ruby.weatherrecyclerview.repository.WeatherRepository;
 import ml.ruby.weatherrecyclerview.utils.ExecutorSupplier;
 import ml.ruby.weatherrecyclerview.utils.GetLanguage;
 import ml.ruby.weatherrecyclerview.viewmodel.PlacesViewModel;
@@ -44,7 +42,7 @@ public class WeatherFragment extends Fragment {
         weatherViewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
         this.placesViewModel.getPlaceToSwitch().observe(this,
                 locationBean -> {
-                    String latitude = String.valueOf(this.placesViewModel.getPlaceToSwitch().getValue().getLat());
+                    String latitude = String.valueOf(Objects.requireNonNull(this.placesViewModel.getPlaceToSwitch().getValue()).getLat());
                     String longitude = String.valueOf(this.placesViewModel.getPlaceToSwitch().getValue().getLon());
                     this.weatherViewModel.queryWeatherInfo(
                             new QueryParams(latitude, longitude, GetLanguage.getLanguage()));
@@ -60,14 +58,9 @@ public class WeatherFragment extends Fragment {
                     dailyList.clear();
                     dailyList.addAll(value.getDaily());
                 }
-                requireActivity().runOnUiThread(() -> {
-                    adapter.notifyItemRangeChanged(0, 7);
-                });
+                requireActivity().runOnUiThread(() -> adapter.notifyItemRangeChanged(0, 7));
             });
         });
-
-        // SwipeRefreshLayout 显示与隐藏
-        WeatherRepository.getInstance().getIsLoaded().observe(this, this::isLoaded);
     }
 
     @Nullable
@@ -82,31 +75,11 @@ public class WeatherFragment extends Fragment {
     public void onStart() {
         super.onStart();
         binding.weatherRecyclerview.setAdapter(adapter);
-
-        binding.refreshData.setColorSchemeColors(getResources().getColor(R.color.blue, getActivity().getTheme()),
-                getResources().getColor(R.color.red, getActivity().getTheme()),
-                getResources().getColor(R.color.yellow, getActivity().getTheme()),
-                getResources().getColor(R.color.green, getActivity().getTheme()));
-        binding.refreshData.setOnRefreshListener(() -> {
-            // TODO: Set the refresh method. We should query whether the place now in database. And we should use the location
-            // update to show its info in screen
-            PlaceBeanItem value = placesViewModel.getPlaceToSwitch().getValue();
-            if (value != null) {
-                weatherViewModel.queryWeatherInfo(new QueryParams(String.valueOf(value.getLat()),
-                        String.valueOf(value.getLon()), GetLanguage.getLanguage()));
-            }
-        });
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    }
-
-    private void isLoaded(boolean isLoaded) {
-        if (isLoaded) {
-            binding.refreshData.setRefreshing(false);
-        }
     }
 }

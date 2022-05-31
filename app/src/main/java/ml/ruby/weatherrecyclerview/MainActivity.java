@@ -6,34 +6,25 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.material.card.MaterialCardView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import ml.ruby.weatherrecyclerview.adapter.HourlyWeatherAdapter;
 import ml.ruby.weatherrecyclerview.databinding.ActivityMainBinding;
+import ml.ruby.weatherrecyclerview.model.QueryParams;
 import ml.ruby.weatherrecyclerview.model.onecall.Current;
-import ml.ruby.weatherrecyclerview.model.onecall.Hourly;
 import ml.ruby.weatherrecyclerview.model.onecall.OneCallBean;
 import ml.ruby.weatherrecyclerview.model.onecall.Weather;
+import ml.ruby.weatherrecyclerview.model.place.PlaceBeanItem;
 import ml.ruby.weatherrecyclerview.repository.PlacesRepository;
 import ml.ruby.weatherrecyclerview.repository.WeatherRepository;
 import ml.ruby.weatherrecyclerview.utils.Constants;
 import ml.ruby.weatherrecyclerview.utils.ExecutorSupplier;
+import ml.ruby.weatherrecyclerview.utils.GetLanguage;
 import ml.ruby.weatherrecyclerview.utils.NumberOperation;
 import ml.ruby.weatherrecyclerview.utils.PreferenceManage;
 import ml.ruby.weatherrecyclerview.utils.Utility;
@@ -41,15 +32,19 @@ import ml.ruby.weatherrecyclerview.view.HourlyWeatherFragment;
 import ml.ruby.weatherrecyclerview.view.PlacesActivity;
 import ml.ruby.weatherrecyclerview.view.WeatherFragment;
 import ml.ruby.weatherrecyclerview.viewmodel.PlacesViewModel;
+import ml.ruby.weatherrecyclerview.viewmodel.WeatherViewModel;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private final int ASK_LOCATION_PERMISSION = 1;
     private PreferenceManage preferenceManage;
+    private PlacesViewModel placesViewModel;
+    private WeatherViewModel weatherViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        PlacesViewModel placesViewModel = new ViewModelProvider(this).get(PlacesViewModel.class);
+        placesViewModel = new ViewModelProvider(this).get(PlacesViewModel.class);
+        weatherViewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -78,9 +73,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        binding.refreshData.setColorSchemeColors(getResources().getColor(R.color.blue, getTheme()),
+                getResources().getColor(R.color.red, getTheme()),
+                getResources().getColor(R.color.yellow, getTheme()),
+                getResources().getColor(R.color.green, getTheme()));
+        binding.refreshData.setOnRefreshListener(() -> {
+            PlaceBeanItem value = placesViewModel.getPlaceToSwitch().getValue();
+            if (value != null) {
+                weatherViewModel.queryWeatherInfo(new QueryParams(String.valueOf(value.getLat()),
+                        String.valueOf(value.getLon()), GetLanguage.getLanguage()));
+            }
+        });
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         // 关闭线程池
+        binding = null;
         ExecutorSupplier.getExecutor().shutdownNow();
     }
 
@@ -150,11 +162,15 @@ public class MainActivity extends AppCompatActivity {
 
         // 监听天气是否刷新
         WeatherRepository.getInstance().getWeatherInfo().observe(this, this::setWeatherWidget);
+
+        // SwipeRefreshLayout 显示与隐藏
+        WeatherRepository.getInstance().getIsLoaded().observe(this, this::isLoaded);
     }
 
     private void isLoaded(boolean isLoaded) {
         if (isLoaded) {
             binding.progressbar.setVisibility(View.GONE);
+            binding.refreshData.setRefreshing(false);
         } else {
             binding.progressbar.setVisibility(View.VISIBLE);
         }
