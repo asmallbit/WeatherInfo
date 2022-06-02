@@ -1,22 +1,14 @@
 package ml.ruby.weatherrecyclerview.repository;
 
-import android.os.Handler;
-import android.os.Message;
-import android.view.View;
-import android.widget.ProgressBar;
-
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Field;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import ml.ruby.weatherrecyclerview.MainActivity;
 import ml.ruby.weatherrecyclerview.model.onecall.OneCallBean;
 import ml.ruby.weatherrecyclerview.network.RetrofitClient;
-import ml.ruby.weatherrecyclerview.utils.Constants;
 import ml.ruby.weatherrecyclerview.utils.Logs;
-import ml.ruby.weatherrecyclerview.view.WeatherFragment;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,9 +22,9 @@ import retrofit2.Response;
 public class WeatherRepository {
     private static final String TAG = "WeatherRepository";
     private static WeatherRepository repository = null;
-    private MutableLiveData<OneCallBean> weatherLiveData = new MutableLiveData<>();
-    private MutableLiveData<Boolean> isLoaded = new MutableLiveData<>();
-    private MutableLiveData<Boolean> isSucceed = new MutableLiveData<>();
+    private final MutableLiveData<OneCallBean> weatherLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isLoaded = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isSucceed = new MutableLiveData<>();
 
     private WeatherRepository() {
     }
@@ -53,7 +45,7 @@ public class WeatherRepository {
         // Call the api
         weatherCall.enqueue(new Callback<OneCallBean>() {
             @Override
-            public void onResponse(Call<OneCallBean> call, Response<OneCallBean> response) {
+            public void onResponse(@NonNull Call<OneCallBean> call, @NonNull Response<OneCallBean> response) {
                 // Okay, we get the response successfully
                 weatherLiveData.postValue(response.body());
                 Logs.logDebug(TAG, "onResponse: " + weatherCall.request().url());
@@ -62,7 +54,7 @@ public class WeatherRepository {
             }
 
             @Override
-            public void onFailure(Call<OneCallBean> call, Throwable t) {
+            public void onFailure(@NonNull Call<OneCallBean> call, @Nullable Throwable t) {
                 isLoaded.postValue(true);
                 isSucceed.postValue(false);
             }

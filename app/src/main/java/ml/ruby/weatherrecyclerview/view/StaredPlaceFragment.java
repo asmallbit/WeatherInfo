@@ -20,6 +20,7 @@ import ml.ruby.weatherrecyclerview.databinding.FragmentStaredPlacesBinding;
 import ml.ruby.weatherrecyclerview.listeners.ItemsUpdateListener;
 import ml.ruby.weatherrecyclerview.model.db.PlaceRecodeItem;
 import ml.ruby.weatherrecyclerview.utils.AppDatabase;
+import ml.ruby.weatherrecyclerview.utils.Constants;
 import ml.ruby.weatherrecyclerview.utils.ExecutorSupplier;
 import ml.ruby.weatherrecyclerview.utils.PlacesDiffCallback;
 import ml.ruby.weatherrecyclerview.utils.PreferenceManage;
@@ -75,9 +76,9 @@ public class StaredPlaceFragment extends Fragment implements ItemsUpdateListener
                 preferenceManage = new PreferenceManage(MyApplication.getPreference());
             }
             newPlaces.clear();
-            String placeName = preferenceManage.getString("cityName");
-            float lat = preferenceManage.getFloat("lat");
-            float lon = preferenceManage.getFloat("lon");
+            String placeName = preferenceManage.getString(Constants.CITY_NAME);
+            float lat = preferenceManage.getFloat(Constants.LATITUDE);
+            float lon = preferenceManage.getFloat(Constants.LONGITUDE);
             if (!"".equals(placeName)) {
                 String[] placeInfo = placeName.split(", ");
                 if (placeInfo.length == 2) {

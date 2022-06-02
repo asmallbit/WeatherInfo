@@ -10,14 +10,15 @@ import android.os.Build;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import ml.ruby.weatherrecyclerview.BuildConfig;
 import ml.ruby.weatherrecyclerview.MyApplication;
-import ml.ruby.weatherrecyclerview.network.RetrofitClient;
-import ml.ruby.weatherrecyclerview.model.LocationBean;
 import ml.ruby.weatherrecyclerview.model.place.PlaceBeanItem;
+import ml.ruby.weatherrecyclerview.network.RetrofitClient;
+import ml.ruby.weatherrecyclerview.utils.Constants;
 import ml.ruby.weatherrecyclerview.utils.Logs;
 import ml.ruby.weatherrecyclerview.utils.NumberOperation;
 import ml.ruby.weatherrecyclerview.utils.PreferenceManage;
@@ -35,7 +36,7 @@ public class PlacesRepository {
     private static PlacesRepository repository;
     private final MutableLiveData<String> toastMessage = new MutableLiveData<>();
     // The first one is for the query results and the second one is for store the location place name(decode geo)
-    private LocationBean locationBean;
+
     private final int accuracy = 2;           // 精度
     private final MutableLiveData<List<PlaceBeanItem>> geoPlaces = new MutableLiveData<>();
     private final MutableLiveData<PlaceBeanItem> place = new MutableLiveData<>();
@@ -66,7 +67,7 @@ public class PlacesRepository {
         Call<List<PlaceBeanItem>> placeInfo = RetrofitClient.placeGeocoding().getPlaceInfo(placeName, limit, appid);
         placeInfo.enqueue(new Callback<List<PlaceBeanItem>>() {
             @Override
-            public void onResponse(@NonNull Call<List<PlaceBeanItem>> call, Response<List<PlaceBeanItem>> response) {
+            public void onResponse(@NonNull Call<List<PlaceBeanItem>> call, @NonNull Response<List<PlaceBeanItem>> response) {
                 if (response.body() != null) {
                     geoPlaces.postValue(response.body());
                 } else {
@@ -75,7 +76,7 @@ public class PlacesRepository {
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<PlaceBeanItem>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<PlaceBeanItem>> call, @Nullable Throwable t) {
                 toastMessage.postValue("No internet");
             }
         });
@@ -87,18 +88,18 @@ public class PlacesRepository {
         Call<List<PlaceBeanItem>> placeInfo = RetrofitClient.placeGeocoding().getReversePlaceInfo(lat, lon, appid);
         placeInfo.enqueue(new Callback<List<PlaceBeanItem>>() {
             @Override
-            public void onResponse(Call<List<PlaceBeanItem>> call, Response<List<PlaceBeanItem>> response) {
+            public void onResponse(@NonNull Call<List<PlaceBeanItem>> call, @NonNull Response<List<PlaceBeanItem>> response) {
                 if (response.body() != null) {
                     PlaceBeanItem city = response.body().get(0);
                     place.postValue(city);
-                    preferenceManage.putString("cityName", city.getAreaFullName());
+                    preferenceManage.putString(Constants.CITY_NAME, city.getAreaFullName());
                 } else {
                     Logs.logDebug(TAG, "onResponse: get some errors now");
                 }
             }
 
             @Override
-            public void onFailure(Call<List<PlaceBeanItem>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<PlaceBeanItem>> call, @Nullable Throwable t) {
                 toastMessage.postValue("No internet");
             }
         });
@@ -123,7 +124,6 @@ public class PlacesRepository {
                         Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                         double lat = NumberOperation.round(lastKnownLocation.getLatitude(), 2);
                         double lon = NumberOperation.round(lastKnownLocation.getLongitude(), 2);
-                        locationBean = new LocationBean(lat, lon);
                         queryPlacesReverseGeo(lat, lon, BuildConfig.WEATHER_API_KEY);
                         saveTheData2Sp((float) lat, (float) lon);
                     }
@@ -136,7 +136,6 @@ public class PlacesRepository {
                         if (location != null) {
                             double lat = NumberOperation.round(location.getLatitude(), accuracy);
                             double lon = NumberOperation.round(location.getLongitude(), accuracy);
-                            locationBean = new LocationBean(lat, lon);
                             queryPlacesReverseGeo(lat, lon, BuildConfig.WEATHER_API_KEY);
                             saveTheData2Sp((float) lat, (float) lon);
                         }
@@ -150,7 +149,6 @@ public class PlacesRepository {
                                 Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                                 double lat = NumberOperation.round(lastKnownLocation.getLatitude(), 2);
                                 double lon = NumberOperation.round(lastKnownLocation.getLongitude(), 2);
-                                locationBean = new LocationBean(lat, lon);
                                 queryPlacesReverseGeo(lat, lon, BuildConfig.WEATHER_API_KEY);
                                 saveTheData2Sp((float) lat, (float) lon);
                             }
@@ -171,8 +169,8 @@ public class PlacesRepository {
     }
 
     private void saveTheData2Sp(float lat, float lon) {
-        preferenceManage.putFloat("lat", lat);
-        preferenceManage.putFloat("lon", lon);
+        preferenceManage.putFloat(Constants.LATITUDE, lat);
+        preferenceManage.putFloat(Constants.LONGITUDE, lon);
     }
 
     public void updatePlaceManually(PlaceBeanItem item) {

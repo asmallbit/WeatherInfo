@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">WeatherRecyclerView</string>
+    <string name="temperature">%1$d℃"</string>
+    <string name="feels_like">Feels like: %1$d℃</string>
+    <string name="wind">Wind: %1$.1fm/s %2$s</string>
+    <string name="humidity">Humidity: %1$d%%</string>
+    <string name="uv_index">UV index: %1$.1f</string>
+    <string name="pressure">Pressure: %1$dhPa</string>
+    <string name="visibility">Visibility: %1$dkm</string>
+    <string name="dew_point">Dew point: %1$d℃</string>
+    <string name="ask_gps_title">Please open the gps</string>
+    <string name="ask_gps_message">We need the gps to get your location. Please enable the gps</string>
+    <string name="positive">Yes</string>
+    <string name="negative">No</string>
+    <string name="denied_open_gps_notify">Okay, we will show London\'s weather as we cant get your location</string>
+    <string name="pull_weather_failed_notify">Can\'t connect to open weather. Maybe you don\'t have internet now.</string>
+    <string name="denied_location_permission_notify">Sorry, you have to grant this permission to let us show the weather at your location</string>
 </resources>

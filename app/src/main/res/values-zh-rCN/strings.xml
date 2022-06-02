@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">WeatherRecyclerView</string>
+    <string name="temperature">%1$d℃"</string>
+    <string name="feels_like">体感温度: %1$d℃</string>
+    <string name="wind">风力: %1$.1fm/s %2$s</string>
+    <string name="humidity">湿度: %1$d%%</string>
+    <string name="uv_index">紫外线指数: %1$.1f</string>
+    <string name="pressure">气压: %1$dhPa</string>
+    <string name="visibility">能见度: %1$dkm</string>
+    <string name="dew_point">露点: %1$d℃</string>
+    <string name="ask_gps_title">请打开GPS</string>
+    <string name="ask_gps_message">我们需要GPS来获取您的位置, 所以请打开GPS</string>
+    <string name="positive">是</string>
+    <string name="negative">否</string>
+    <string name="denied_open_gps_notify">因为您未打开GPS, 我们将显示默认地点的天气状况</string>
+    <string name="pull_weather_failed_notify">无法连接到Open Weather, 请检查您是否可以访问互联网</string>
+    <string name="denied_location_permission_notify">抱歉, 您需要给我们定位权限以便显示您当地的天气</string>
+</resources>

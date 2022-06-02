@@ -25,7 +25,6 @@ import ml.ruby.weatherrecyclerview.repository.WeatherRepository;
 import ml.ruby.weatherrecyclerview.utils.Constants;
 import ml.ruby.weatherrecyclerview.utils.ExecutorSupplier;
 import ml.ruby.weatherrecyclerview.utils.GetLanguage;
-import ml.ruby.weatherrecyclerview.utils.NumberOperation;
 import ml.ruby.weatherrecyclerview.utils.PreferenceManage;
 import ml.ruby.weatherrecyclerview.utils.Utility;
 import ml.ruby.weatherrecyclerview.view.HourlyWeatherFragment;
@@ -37,7 +36,6 @@ import ml.ruby.weatherrecyclerview.viewmodel.WeatherViewModel;
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private final int ASK_LOCATION_PERMISSION = 1;
-    private PreferenceManage preferenceManage;
     private PlacesViewModel placesViewModel;
     private WeatherViewModel weatherViewModel;
 
@@ -51,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         bindFragment();
 
-        preferenceManage = new PreferenceManage(MyApplication.getPreference());
+        PreferenceManage preferenceManage = new PreferenceManage(MyApplication.getPreference());
         if (!"".equals(preferenceManage.getString("cityName"))) {
             PlacesRepository.getInstance().queryPlacesReverseGeo(preferenceManage.getFloat("lat"),
                     preferenceManage.getFloat("lon"), BuildConfig.WEATHER_API_KEY);
@@ -103,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
             case ASK_LOCATION_PERMISSION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
                     Toast.makeText(this,
-                            "Sorry, you have to grant this permission to let us show the weather at your location",
+                            getString(R.string.denied_location_permission_notify),
                             Toast.LENGTH_SHORT).show();
                     PlacesRepository.getInstance().updateLocation();
                 }
@@ -126,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         // 天气数据拉取失败提示
         WeatherRepository.getInstance().getIsSucceed().observe(this, isSucceed -> {
             if (!isSucceed) {
-                Toast.makeText(MainActivity.this, "Can't connect to open weather. Maybe you don't have internet now.",
+                Toast.makeText(MainActivity.this, getString(R.string.pull_weather_failed_notify),
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -148,13 +146,13 @@ public class MainActivity extends AppCompatActivity {
         placesViewModel.isGPSEnabled().observe(this, isGPSEnabled -> {
             if (!isGPSEnabled) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Please open the gps")
-                        .setMessage("We need the gps to get your location. Please enable the gps")
-                        .setPositiveButton("Yes", (dialog, which) ->
+                builder.setTitle(R.string.ask_gps_title)
+                        .setMessage(R.string.ask_gps_message)
+                        .setPositiveButton(R.string.positive, (dialog, which) ->
                                 MainActivity.this.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
-                        .setNegativeButton("No", (dialog, which) ->
+                        .setNegativeButton(R.string.negative, (dialog, which) ->
                                 Toast.makeText(MainActivity.this,
-                                        "Okay, we will show London's weather as we cant get your location", Toast.LENGTH_SHORT).show())
+                                        R.string.denied_open_gps_notify, Toast.LENGTH_SHORT).show())
                         .setCancelable(false)
                         .show();
             }
@@ -182,15 +180,15 @@ public class MainActivity extends AppCompatActivity {
         binding.weatherWidget.setBackgroundResource(R.color.weather_widget_background_color);
         binding.weatherIcon.setImageResource(Utility.getWeatherArtImage(currentWeather.getId()));
         binding.weatherInfo.setText(currentWeather.getDescription());
-        binding.temperature.setText((int) (current.getTemp() - Constants.KELVINS) + "℃");
-        binding.feelsLike.setText("Feels like " +
-                (int) (current.getFeelsLike() - Constants.KELVINS) + "℃");
-        binding.windSpeed.setText("Wind: " + NumberOperation.round(current.getWindSpeed(), 1) + "m/s "
-                + Utility.convertDegreeToCardinalDirection(current.getWindDeg()));
-        binding.humidity.setText("Humidity: " + current.getHumidity() + "%");
-        binding.uvIndex.setText("UV index: " + NumberOperation.round(current.getUvi(), 1));
-        binding.pressure.setText("Pressure: " + current.getPressure() + "hPa");
-        binding.visibility.setText("Visibility: " + current.getVisibility() / 1000 + "km");
-        binding.dewPoint.setText("Dew point: " + (int) (current.getDewPoint() - Constants.KELVINS) + "℃");
+        binding.temperature.setText(getString(R.string.temperature, (int) (current.getTemp() - Constants.KELVINS)));
+        binding.feelsLike.setText(getString(R.string.feels_like,
+                (int) (current.getFeelsLike() - Constants.KELVINS)));
+        binding.windSpeed.setText(getString(R.string.wind, current.getWindSpeed(),
+                Utility.convertDegreeToCardinalDirection(current.getWindDeg())));
+        binding.humidity.setText(getString(R.string.humidity, current.getHumidity()));
+        binding.uvIndex.setText(getString(R.string.uv_index, current.getUvi()));
+        binding.pressure.setText(getString(R.string.pressure, current.getPressure()));
+        binding.visibility.setText(getString(R.string.visibility, current.getVisibility() / 1000));
+        binding.dewPoint.setText(getString(R.string.dew_point, (int) (current.getDewPoint() - Constants.KELVINS)));
     }
 }
