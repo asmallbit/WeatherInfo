@@ -5,14 +5,13 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.nfc.Tag;
 import android.os.Build;
+import android.widget.Toast;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.utils.widget.ImageFilterView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -116,51 +115,8 @@ public class PlacesRepository {
             double lon = NumberOperation.round(-0.118092, accuracy);
             queryPlacesReverseGeo(lat, lon, BuildConfig.WEATHER_API_KEY);
             saveTheData2Sp((float) lat, (float) lon);
-            return;
         }
-        LocationManager locationManager = (LocationManager) MyApplication.getContext().getSystemService(Context.LOCATION_SERVICE);
-        // Use the network instead(Added in API level 1)
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 1000,
-                location -> {
-                    if (location != null) {
-                        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                        double lat = NumberOperation.round(lastKnownLocation.getLatitude(), 2);
-                        double lon = NumberOperation.round(lastKnownLocation.getLongitude(), 2);
-                        queryPlacesReverseGeo(lat, lon, BuildConfig.WEATHER_API_KEY);
-                        saveTheData2Sp((float) lat, (float) lon);
-                    }
-                });
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            // we will use getCurrentLocation() method if the device is running android S or higher
-            locationManager.getCurrentLocation(LocationManager.FUSED_PROVIDER, null,
-                    MyApplication.getContext().getMainExecutor(),
-                    location -> {
-                        if (location != null) {
-                            double lat = NumberOperation.round(location.getLatitude(), accuracy);
-                            double lon = NumberOperation.round(location.getLongitude(), accuracy);
-                            queryPlacesReverseGeo(lat, lon, BuildConfig.WEATHER_API_KEY);
-                            saveTheData2Sp((float) lat, (float) lon);
-                        }
-                    });
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // use getLastKnownLocation()
-            try {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 1000,
-                        location -> {
-                            if (location != null) {
-                                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                                if (lastKnownLocation != null) {
-                                    double lat = NumberOperation.round(lastKnownLocation.getLatitude(), 2);
-                                    double lon = NumberOperation.round(lastKnownLocation.getLongitude(), 2);
-                                    queryPlacesReverseGeo(lat, lon, BuildConfig.WEATHER_API_KEY);
-                                    saveTheData2Sp((float) lat, (float) lon);
-                                }
-                            }
-                        });
-            } catch (IllegalArgumentException e ) {
-                Logs.logDebug(TAG, "updateLocation: " + "The device doesn't support GPS");
-            }
-        }
+        updateLocationHandler();
     }
 
     private void askGPSEnable() {
@@ -175,6 +131,68 @@ public class PlacesRepository {
     private void saveTheData2Sp(float lat, float lon) {
         preferenceManage.putFloat(Constants.LATITUDE, lat);
         preferenceManage.putFloat(Constants.LONGITUDE, lon);
+    }
+
+    private void updateLocationHandler() {
+        if (ContextCompat.checkSelfPermission(MyApplication.getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            LocationManager locationManager = (LocationManager) MyApplication.getContext().getSystemService(Context.LOCATION_SERVICE);
+            // Use the network instead(Added in API level 1)
+            if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER,
+                        location -> {
+                            if (location != null) {
+                                double lat = NumberOperation.round(location.getLatitude(), 2);
+                                double lon = NumberOperation.round(location.getLongitude(), 2);
+                                queryPlacesReverseGeo(lat, lon, BuildConfig.WEATHER_API_KEY);
+                                saveTheData2Sp((float) lat, (float) lon);
+                            }
+                        }, null);
+            }
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    // we will use getCurrentLocation() method if the device is running android S or higher
+                    locationManager.getCurrentLocation(LocationManager.FUSED_PROVIDER, null,
+                            MyApplication.getContext().getMainExecutor(),
+                            location -> {
+                                if (location != null) {
+                                    double lat = NumberOperation.round(location.getLatitude(), accuracy);
+                                    double lon = NumberOperation.round(location.getLongitude(), accuracy);
+                                    queryPlacesReverseGeo(lat, lon, BuildConfig.WEATHER_API_KEY);
+                                    saveTheData2Sp((float) lat, (float) lon);
+                                }
+                            });
+                } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
+                    locationManager.getCurrentLocation(LocationManager.GPS_PROVIDER, null,
+                            MyApplication.getContext().getMainExecutor(),
+                            location -> {
+                                if (location != null) {
+                                    double lat = NumberOperation.round(location.getLatitude(), accuracy);
+                                    double lon = NumberOperation.round(location.getLongitude(), accuracy);
+                                    queryPlacesReverseGeo(lat, lon, BuildConfig.WEATHER_API_KEY);
+                                    saveTheData2Sp((float) lat, (float) lon);
+                                }
+                            });
+                } else {
+                    try {
+                        locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,
+                                location -> {
+                                    Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                                    if (lastKnownLocation != null) {
+                                        double lat = NumberOperation.round(lastKnownLocation.getLatitude(), 2);
+                                        double lon = NumberOperation.round(lastKnownLocation.getLongitude(), 2);
+                                        queryPlacesReverseGeo(lat, lon, BuildConfig.WEATHER_API_KEY);
+                                        saveTheData2Sp((float) lat, (float) lon);
+                                    }
+                                }, null);
+                    } catch (IllegalArgumentException e) {
+                        Logs.logDebug(TAG, "updateLocation: " + "The device doesn't support GPS");
+                    }
+                }
+            } else {
+                Toast.makeText(MyApplication.getContext(), "Please enable the GPS", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     public void updatePlaceManually(PlaceBeanItem item) {

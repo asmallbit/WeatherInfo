@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this,
                             getString(R.string.denied_location_permission_notify),
                             Toast.LENGTH_SHORT).show();
+                } else {
                     PlacesRepository.getInstance().updateLocation();
                 }
         }
