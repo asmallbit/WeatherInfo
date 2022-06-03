@@ -15,4 +15,27 @@
     <string name="denied_open_gps_notify">因为您未打开GPS, 我们将显示默认地点的天气状况</string>
     <string name="pull_weather_failed_notify">无法连接到Open Weather, 请检查您是否可以访问互联网</string>
     <string name="denied_location_permission_notify">抱歉, 您需要给我们定位权限以便显示您当地的天气</string>
+
+    <!--For the expandableLayout-->
+    <string name="precipitation_word">降水量</string>
+    <string name="pop_word">降水概率</string>
+    <string name="wind_word">风况</string>
+    <string name="humidity_word">湿度</string>
+    <string name="uv_index_word">紫外线指数</string>
+    <string name="sunrise_word">日出</string>
+    <string name="sunset_word">日落</string>
+    <string name="precipitation_key">%1$.1fmm</string>
+    <string name="pop_key">%1$d%%</string>
+    <string name="wind_key">%1$.1fm/s %2$s</string>
+    <string name="humidity_key">%1$d%%</string>
+
+    <string-array name="week_array">
+        <item>星期日</item>
+        <item>星期一</item>
+        <item>星期二</item>
+        <item>星期三</item>
+        <item>星期四</item>
+        <item>星期五</item>
+        <item>星期六</item>
+    </string-array>
 </resources>

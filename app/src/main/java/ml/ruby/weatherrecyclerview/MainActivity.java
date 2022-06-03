@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         bindFragment();
 
         PreferenceManage preferenceManage = new PreferenceManage(MyApplication.getPreference());
@@ -191,4 +190,5 @@ public class MainActivity extends AppCompatActivity {
         binding.visibility.setText(getString(R.string.visibility, current.getVisibility() / 1000));
         binding.dewPoint.setText(getString(R.string.dew_point, (int) (current.getDewPoint() - Constants.KELVINS)));
     }
+
 }

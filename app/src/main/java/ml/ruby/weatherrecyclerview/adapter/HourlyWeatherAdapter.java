@@ -1,6 +1,8 @@
 package ml.ruby.weatherrecyclerview.adapter;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +42,7 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Hourly hourly = hourlies.get(position);
-        holder.hour.setText(Utility.getTimeFromTimeStamp(hourly.getDt()) + ":00");
+        holder.hour.setText(Utility.getTimeFromTimeStamp(hourly.getDt(), "HH") + ":00");
         holder.temperature.setText((int) (hourly.getTemp() - Constants.KELVINS) + "℃");
         holder.weather_icon.setImageResource(Utility.getWeatherArtImage(hourly.getWeather().get(0).getId()));
     }

@@ -39,10 +39,10 @@ public class Utility {
         }
     }
 
-    // 从时间戳里获取对应的小时
-    public static String getTimeFromTimeStamp(long timeStamp) {
+    // 从时间戳中获取对应格式的时间
+    public static String getTimeFromTimeStamp(long timeStamp, String pattern) {
         Date date = new Date(timeStamp * 1000);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         return simpleDateFormat.format(date);
     }
 

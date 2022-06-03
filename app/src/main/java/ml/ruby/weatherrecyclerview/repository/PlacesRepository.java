@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.nfc.Tag;
 import android.os.Build;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.utils.widget.ImageFilterView;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -147,13 +149,15 @@ public class PlacesRepository {
                         location -> {
                             if (location != null) {
                                 Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                                double lat = NumberOperation.round(lastKnownLocation.getLatitude(), 2);
-                                double lon = NumberOperation.round(lastKnownLocation.getLongitude(), 2);
-                                queryPlacesReverseGeo(lat, lon, BuildConfig.WEATHER_API_KEY);
-                                saveTheData2Sp((float) lat, (float) lon);
+                                if (lastKnownLocation != null) {
+                                    double lat = NumberOperation.round(lastKnownLocation.getLatitude(), 2);
+                                    double lon = NumberOperation.round(lastKnownLocation.getLongitude(), 2);
+                                    queryPlacesReverseGeo(lat, lon, BuildConfig.WEATHER_API_KEY);
+                                    saveTheData2Sp((float) lat, (float) lon);
+                                }
                             }
                         });
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e ) {
                 Logs.logDebug(TAG, "updateLocation: " + "The device doesn't support GPS");
             }
         }

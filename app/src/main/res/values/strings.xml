@@ -15,4 +15,27 @@
     <string name="denied_open_gps_notify">Okay, we will show London\'s weather as we cant get your location</string>
     <string name="pull_weather_failed_notify">Can\'t connect to open weather. Maybe you don\'t have internet now.</string>
     <string name="denied_location_permission_notify">Sorry, you have to grant this permission to let us show the weather at your location</string>
+
+    <!--For the expandableLayout-->
+    <string name="precipitation_word">Precipitation</string>
+    <string name="pop_word">Probability of precipitation</string>
+    <string name="wind_word">Wind</string>
+    <string name="humidity_word">Humidity</string>
+    <string name="uv_index_word">UV index</string>
+    <string name="sunrise_word">Sunrise</string>
+    <string name="sunset_word">Sunset</string>
+    <string name="precipitation_key">%1$.1fmm</string>
+    <string name="pop_key">%1$d%%</string>
+    <string name="wind_key">%1$.1fm/s %2$s</string>
+    <string name="humidity_key">%1$d%%</string>
+
+    <string-array name="week_array">
+        <item>Sun</item>
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+    </string-array>
 </resources>
