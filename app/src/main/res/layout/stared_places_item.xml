@@ -31,16 +31,13 @@
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:gravity="center_horizontal" />
-    <!--        android:text="24°C" />-->
 
     <ImageView
         android:id="@+id/forecast_icon_now"
         android:layout_width="0dp"
         android:layout_height="35dp"
         android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:scaleType="centerCrop" />
-    <!--        android:src="@drawable/art_clear_sky" />-->
+        android:layout_weight="1" />
 
 
 </LinearLayout>

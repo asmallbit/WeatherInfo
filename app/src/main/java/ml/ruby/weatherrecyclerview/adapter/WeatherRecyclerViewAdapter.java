@@ -56,6 +56,7 @@ public class WeatherRecyclerViewAdapter extends RecyclerView.Adapter<WeatherRecy
         holder.binding.temperatureRange.setText(temp);
         // The weather forecast description
         holder.binding.forecast.setImageResource(Utility.getWeatherArtImage(daily.getWeather().get(0).getId()));
+        holder.binding.expandableLayout.collapse();
         setListeners(holder, daily, position);
     }
 

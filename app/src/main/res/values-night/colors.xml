@@ -11,8 +11,8 @@
     <color name="red">#DB4437</color>
     <color name="yellow">#F4B400</color>
     <color name="green">#0F9D58</color>
-    <color name="text_color">#000000</color>
+    <color name="text_color">#e0e0e0</color>
     <color name="darker_gray">#AAAAAA</color>
-    <color name="secondary_text_color">#C0C0C0</color>
-    <color name="weather_widget_background_color">#DCDCDC</color>
+    <color name="secondary_text_color">#e6e6e6</color>
+    <color name="weather_widget_background_color">#313133</color>
 </resources>
