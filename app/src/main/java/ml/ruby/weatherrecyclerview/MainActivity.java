@@ -41,12 +41,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         placesViewModel = new ViewModelProvider(this).get(PlacesViewModel.class);
         weatherViewModel = new ViewModelProvider(this).get(WeatherViewModel.class);
-        super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
+        bindFragment(savedInstanceState);
         setContentView(binding.getRoot());
-        bindFragment();
 
         PreferenceManage preferenceManage = new PreferenceManage(MyApplication.getPreference());
         if (!"".equals(preferenceManage.getString("cityName"))) {
@@ -108,11 +108,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void bindFragment() {
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_weather, new WeatherFragment())
-                .add(R.id.fragment_hourly_weather, new HourlyWeatherFragment())
-                .commit();
+    private void bindFragment(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_weather, new WeatherFragment())
+                    .add(R.id.fragment_hourly_weather, new HourlyWeatherFragment())
+                    .commit();
+        }
     }
 
     private void setObserver(PlacesViewModel placesViewModel) {

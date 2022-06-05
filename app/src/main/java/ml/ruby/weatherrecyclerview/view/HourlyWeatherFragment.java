@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,6 +37,10 @@ public class HourlyWeatherFragment extends Fragment {
                 requireActivity().runOnUiThread(adapter::notifyDataSetChanged);
             });
         });
+
+        if (savedInstanceState != null) {
+            hourlies.addAll(Objects.requireNonNull(weatherViewModel.getWeatherLiveData().getValue()).getHourly());
+        }
 
     }
 
