@@ -20,7 +20,7 @@
                 android:layout_height="35dp"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:background="@android:color/darker_gray"
+                android:backgroundTint="@color/search_bar_color"
                 app:cardCornerRadius="20dp">
 
                 <LinearLayout
@@ -51,8 +51,10 @@
                 android:id="@+id/cancel_search"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:background="@color/remove_button_color"
                 android:scaleType="centerCrop"
-                android:src="@drawable/cancel_icon" />
+                android:src="@drawable/ic_cancel"
+                app:roundPercent="1" />
 
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>

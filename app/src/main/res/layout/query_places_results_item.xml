@@ -13,8 +13,7 @@
         android:layout_height="30dp"
         android:layout_gravity="center_vertical"
         android:adjustViewBounds="true"
-        android:scaleType="centerInside"
-        android:src="@drawable/loading" />
+        android:scaleType="centerInside" />
 
     <TextView
         android:id="@+id/the_place_name"

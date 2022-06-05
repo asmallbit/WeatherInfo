@@ -15,4 +15,7 @@
     <color name="darker_gray">#AAAAAA</color>
     <color name="secondary_text_color">#C0C0C0</color>
     <color name="weather_widget_background_color">#DCDCDC</color>
+    <color name="search_bar_color">#f6f6f6</color>
+    <color name="remove_button_color">#FFFFFF</color>
+    <color name="divider_color">#f3f3f3</color>
 </resources>

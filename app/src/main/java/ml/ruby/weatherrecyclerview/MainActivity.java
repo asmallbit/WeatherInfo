@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
     private void setWeatherWidget(OneCallBean bean) {
         Current current = bean.getCurrent();
         Weather currentWeather = bean.getCurrent().getWeather().get(0);
-        binding.weatherWidget.setBackgroundResource(R.color.weather_widget_background_color);
+        binding.weatherWidget.setBackgroundResource(R.drawable.shape_weather_info_widget);
         binding.weatherIcon.setImageResource(Utility.getWeatherArtImage(currentWeather.getId()));
         binding.weatherInfo.setText(currentWeather.getDescription());
         binding.temperature.setText(getString(R.string.temperature, (int) (current.getTemp() - Constants.KELVINS)));
