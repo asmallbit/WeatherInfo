@@ -95,13 +95,14 @@ public class StaredPlacesAdapter extends RecyclerView.Adapter<StaredPlacesAdapte
         });
         // 点击star从数据库中删除
         holder.starState.setOnClickListener(v -> {
-            ExecutorSupplier.getExecutor().execute(() ->
-                    AppDatabase.getInstance().getPlacesDbDao()
-                            .deleteByPosition(place.getLat(), place.getLon(), true)
+            ExecutorSupplier.getExecutor().execute(() -> {
+                        AppDatabase.getInstance().getPlacesDbDao()
+                                .deleteByPosition(place.getLat(), place.getLon(), true);
+                        if (callback != null) {
+                            callback.updateItems();
+                        }
+                    }
             );
-            if (callback != null) {
-                callback.updateItems();
-            }
         });
     }
 
