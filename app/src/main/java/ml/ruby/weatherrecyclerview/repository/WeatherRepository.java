@@ -21,7 +21,6 @@ import retrofit2.Response;
 
 public class WeatherRepository {
     private static final String TAG = "WeatherRepository";
-    private static WeatherRepository repository = null;
     private final MutableLiveData<OneCallBean> weatherLiveData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoaded = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isSucceed = new MutableLiveData<>();
@@ -29,11 +28,13 @@ public class WeatherRepository {
     private WeatherRepository() {
     }
 
+    private static class WeatherRepositoryContainer {
+        private static final WeatherRepository instance = new WeatherRepository();
+    }
+
+
     public static WeatherRepository getInstance() {
-        if (repository == null) {
-            repository = new WeatherRepository();
-        }
-        return repository;
+        return WeatherRepositoryContainer.instance;
     }
 
     // Query the weather info

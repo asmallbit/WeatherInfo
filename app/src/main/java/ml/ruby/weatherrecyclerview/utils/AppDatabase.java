@@ -16,14 +16,12 @@ import ml.ruby.weatherrecyclerview.model.db.PlaceRecodeItem;
 public abstract class AppDatabase extends RoomDatabase {
     public abstract PlacesDbDao getPlacesDbDao();
 
-    private static AppDatabase instance;
+    private static class AppDatabaseContainer {
+        private static final AppDatabase instance =
+                Room.databaseBuilder(MyApplication.getContext(), AppDatabase.class, "places.db").build();
+    }
 
     public static AppDatabase getInstance() {
-        if (instance == null) {
-            synchronized (AppDatabase.class) {
-                instance = Room.databaseBuilder(MyApplication.getContext(), AppDatabase.class, "places.db").build();
-            }
-        }
-        return instance;
+        return AppDatabaseContainer.instance;
     }
 }

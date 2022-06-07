@@ -9,24 +9,18 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * @description:
  */
 public class RetrofitClient {
-    static Retrofit objRetrofit = null;
+    private static class RetrofitClientContainer {
+        private static Retrofit instance = new Retrofit.Builder()
+                .baseUrl("https://api.openweathermap.org/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
 
     public static WeatherApi weatherProvider() {
-        createInstance();
-        return objRetrofit.create(WeatherApi.class);
+        return RetrofitClientContainer.instance.create(WeatherApi.class);
     }
 
     public static PlaceApi placeGeocoding() {
-        createInstance();
-        return objRetrofit.create(PlaceApi.class);
-    }
-
-    private static void createInstance() {
-        if (objRetrofit == null) {
-            objRetrofit = new Retrofit.Builder()
-                    .baseUrl("https://api.openweathermap.org/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-        }
+        return RetrofitClientContainer.instance.create(PlaceApi.class);
     }
 }

@@ -34,25 +34,22 @@ import retrofit2.Response;
  */
 public class PlacesRepository {
     private static final String TAG = "PlacesRepository";
-    private static PlacesRepository repository;
     private final MutableLiveData<String> toastMessage = new MutableLiveData<>();
-    // The first one is for the query results and the second one is for store the location place name(decode geo)
-
     private final int accuracy = 2;           // 精度
     private final MutableLiveData<List<PlaceBeanItem>> geoPlaces = new MutableLiveData<>();
     private final MutableLiveData<PlaceBeanItem> place = new MutableLiveData<>();
     private final MutableLiveData<Boolean> GPSEnabled = new MutableLiveData<>(true);
-    private PreferenceManage preferenceManage;
+    private final PreferenceManage preferenceManage = new PreferenceManage(MyApplication.getPreference());
 
     private PlacesRepository() {
     }
 
+    private static class PlacesRepositoryContainer {
+        private static final PlacesRepository instance = new PlacesRepository();
+    }
+
     public static PlacesRepository getInstance() {
-        if (repository == null) {
-            repository = new PlacesRepository();
-            repository.preferenceManage = new PreferenceManage(MyApplication.getPreference());
-        }
-        return repository;
+        return PlacesRepositoryContainer.instance;
     }
 
     /**

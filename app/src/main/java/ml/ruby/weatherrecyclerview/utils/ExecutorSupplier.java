@@ -17,15 +17,12 @@ import java.util.concurrent.TimeUnit;
  * @description:
  */
 public class ExecutorSupplier {
-    private static ExecutorService executor = null;
-
     private ExecutorSupplier() {
 
     }
 
-    public synchronized static ExecutorService getExecutor() {
-        if (executor == null) {
-
+    private static class ExecutorSupplierContainer {
+        private static ExecutorService getInstance() {
             // 核心线程数
             int corePoolSize = Runtime.getRuntime().availableProcessors();
             // 最大线程数
@@ -39,12 +36,14 @@ public class ExecutorSupplier {
             // 拒绝策略
             RejectedExecutionHandler handler = new ThreadPoolExecutor.DiscardOldestPolicy();
 
-            executor = new ThreadPoolExecutor(corePoolSize,
+            return new ThreadPoolExecutor(corePoolSize,
                     maximumPoolSize,
                     keepAliveTime, unit, workQueue,
                     new ThreadPoolExecutor.DiscardOldestPolicy());
         }
-//            executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
-        return executor;
+    }
+
+    public synchronized static ExecutorService getExecutor() {
+        return ExecutorSupplierContainer.getInstance();
     }
 }
