@@ -38,8 +38,8 @@ public class HourlyWeatherFragment extends Fragment {
             });
         });
 
-        if (savedInstanceState != null) {
-            hourlies.addAll(Objects.requireNonNull(weatherViewModel.getWeatherLiveData().getValue()).getHourly());
+        if (savedInstanceState != null && weatherViewModel.getWeatherLiveData().getValue() != null) {
+            hourlies.addAll(weatherViewModel.getWeatherLiveData().getValue().getHourly());
         }
 
     }

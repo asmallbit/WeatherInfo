@@ -67,7 +67,7 @@ public class StaredPlacesAdapter extends RecyclerView.Adapter<StaredPlacesAdapte
         }
     }
 
-    // 查询天气信息并显示对应天气德图标
+    // 查询天气信息并显示对应天气的图标
     private void syncWeatherIcon(@NonNull PlaceRecodeItem place, ViewHolder holder, String appid) {
         Call<WeatherBean> weatherInfo = RetrofitClient.weatherProvider().getWeatherInfo(place.getLat(), place.getLon(), appid);
         try {

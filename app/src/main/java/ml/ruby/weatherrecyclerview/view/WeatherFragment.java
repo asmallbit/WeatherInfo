@@ -58,12 +58,12 @@ public class WeatherFragment extends Fragment {
                     dailyList.clear();
                     dailyList.addAll(value.getDaily());
                 }
-                requireActivity().runOnUiThread(() -> adapter.notifyItemRangeChanged(0, 7));
+                requireActivity().runOnUiThread(() -> adapter.notifyItemRangeChanged(0, 8));
             });
         });
 
-        if (savedInstanceState != null) {
-            dailyList.addAll(Objects.requireNonNull(weatherViewModel.getWeatherLiveData().getValue()).getDaily());
+        if (savedInstanceState != null && weatherViewModel.getWeatherLiveData().getValue() != null) {
+            dailyList.addAll(weatherViewModel.getWeatherLiveData().getValue().getDaily());
         }
     }
 

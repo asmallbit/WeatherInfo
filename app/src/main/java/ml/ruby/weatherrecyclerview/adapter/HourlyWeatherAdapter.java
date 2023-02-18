@@ -52,7 +52,7 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
         return hourlies.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         TextView hour;
         TextView temperature;
         ImageView weather_icon;
