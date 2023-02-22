@@ -131,10 +131,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // ProgressBar
-        WeatherRepository.getInstance().getIsLoaded().observe(this, this::isLoaded
-        );
-
         // 更新位置
         placesViewModel.updateLocation();
 
@@ -193,5 +189,4 @@ public class MainActivity extends AppCompatActivity {
         binding.visibility.setText(getString(R.string.visibility, current.getVisibility() / 1000));
         binding.dewPoint.setText(getString(R.string.dew_point, (int) (current.getDewPoint() - Constants.KELVINS)));
     }
-
 }

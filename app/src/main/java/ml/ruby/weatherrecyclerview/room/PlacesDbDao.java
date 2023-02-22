@@ -4,10 +4,8 @@ import java.util.List;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import ml.ruby.weatherrecyclerview.model.db.PlaceRecodeItem;
-import ml.ruby.weatherrecyclerview.model.place.PlaceBeanItem;
 
 /**
  * @author: jwhan
@@ -17,20 +15,12 @@ import ml.ruby.weatherrecyclerview.model.place.PlaceBeanItem;
 @Dao
 public interface PlacesDbDao {
     // For star place
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert()
     public void insert(PlaceRecodeItem... places);
 
     // For unstar place
     @Query("DELETE FROM places_table WHERE latitude = :lat AND longitude = :lon AND is_for_star = :isForStar")
     public void deleteByPosition(Double lat, Double lon, boolean isForStar);
-
-    // For quit application and delete all the place which is shown weather info
-    @Query("DELETE FROM places_table WHERE is_for_star = :shouldDelete")
-    public void deleteByType(boolean shouldDelete);
-
-    // Query all the places which is stared
-    @Query("SELECT * FROM places_table WHERE is_for_star = :isStared")
-    public List<PlaceRecodeItem> queryStarredPlaces(boolean isStared);
 
     @Query("SELECT * FROM places_table")
     public List<PlaceRecodeItem> getAll();
