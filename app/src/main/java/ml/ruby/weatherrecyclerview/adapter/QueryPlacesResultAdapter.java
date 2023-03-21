@@ -2,7 +2,6 @@ package ml.ruby.weatherrecyclerview.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +12,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import ml.ruby.weatherrecyclerview.MainActivity;
 import ml.ruby.weatherrecyclerview.R;
 import ml.ruby.weatherrecyclerview.room.PlacesDbDao;
 import ml.ruby.weatherrecyclerview.model.db.PlaceRecodeItem;
@@ -52,7 +51,13 @@ public class QueryPlacesResultAdapter extends RecyclerView.Adapter<QueryPlacesRe
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         PlaceBeanItem bean = list.get(position);
         // Loading the image
-        String flagUrl = "https://countryflagsapi.com/png/" + bean.getCountry();
+        String flagUrl;
+        // For PRC users
+        if (Locale.getDefault().toString().equals("zh_CN") && bean.getCountry().equalsIgnoreCase("TW")) {
+            flagUrl = "https://flagsapi.com/CN/flat/64.png";
+        } else {
+            flagUrl = "https://flagsapi.com/" + bean.getCountry().toUpperCase() + "/flat/64.png";
+        }
         Glide.with(context).load(flagUrl).into(holder.countryFlag);
         bind(holder, bean);
         ExecutorSupplier.getExecutor().execute(() -> {
