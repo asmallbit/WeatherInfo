@@ -60,14 +60,14 @@ public class QueryPlacesResultAdapter extends RecyclerView.Adapter<QueryPlacesRe
         }
         Glide.with(context).load(flagUrl).into(holder.countryFlag);
         bind(holder, bean);
+        holder.starIcon.setChecked(false);
         ExecutorSupplier.getExecutor().execute(() -> {
-            holder.starIcon.setChecked(false);
             List<PlaceRecodeItem> list = AppDatabase.getInstance().getPlacesDbDao().getAll();
             for (PlaceRecodeItem item : list) {
                 if (item.getAreaFullName().equals(bean.getAreaFullName()) &&
                         Math.abs(item.getLon() - bean.getLon()) <= Constants.EQUALS_ZERO &&
                         Math.abs(item.getLat() - bean.getLat()) <= Constants.EQUALS_ZERO) {
-                    holder.starIcon.setChecked(true);
+                    ((Activity) context).runOnUiThread(() -> holder.starIcon.setChecked(true));
                 }
             }
         });
